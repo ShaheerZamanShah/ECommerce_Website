@@ -8,6 +8,22 @@ import './App.css';
 axios.defaults.withCredentials = true;
 const API_URL = config.API_URL;
 
+// Generate session ID for cart persistence
+const getSessionId = () => {
+  let sessionId = localStorage.getItem('sessionId');
+  if (!sessionId) {
+    sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('sessionId', sessionId);
+  }
+  return sessionId;
+};
+
+// Set up axios interceptor to include session ID
+axios.interceptors.request.use((config) => {
+  config.headers['x-session-id'] = getSessionId();
+  return config;
+});
+
 function App() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
